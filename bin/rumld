@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
+
+class RailsLoader
+  class << self
+    # Prevents Rails application from writing to STDOUT
+    def disable_stdout
+      @old_stdout = STDOUT.dup
+      STDOUT.reopen(PLATFORM =~ /mswin/ ? "NUL" : "/dev/null")
+    end
+
+    # Restore STDOUT
+    def enable_stdout
+      STDOUT.reopen(@old_stdout)
+    end
+
+    def load_environment
+      begin
+        disable_stdout
+        puts 'Loading Rails...'
+        require "config/environment"
+        enable_stdout
+      rescue LoadError
+        enable_stdout
+      end
+    end
+  end
+end
+
+RailsLoader.load_environment
+
+require 'rumld'
+require 'rumld/options_struct'
+RUMLD_DEFAULT_FILES = ['*.rb']
+options = Rumld::OptionsStruct.new
+
+options.parse ARGV
+
+
+grapher = Rumld::Graph.new( options.doc_dir, options.source_dirs , options.files )
+
+
+`rm -rf #{options.doc_dir}`
+
+rdoc = "rdoc --op #{options.doc_dir} #{grapher.files_to_process.join(' ')}"
+`#{rdoc}`
+
+File.open(options.outfile, 'w') do |f|
+  f.puts grapher.to_dot
+end

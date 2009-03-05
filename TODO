@@ -1,0 +1,16 @@
+✓ Better define how to layout a Module that has methods as well as sub-Modules
+✓ Draw edges for included Modules as Interface
+✓ Draw edges for ActiveRecord::Association
+✓ Subclass edges
+✓ Try to determine polymorphic relations
+✓ Generate a command line interface for rumld
+✓ Need to run the process against a rails project
+✓ Need to switch on whether rumld is running against a rails project
+- Refactor/rethink collection vs. render
+- Convert to RSpec
+- Check for referenced modules inside methods to infer additional relations
+- Exception Nodes should appear differently
+- Research ruby new gem
+
+Bug?
+- Check generator for like named constants in different module spaces (i.e. A::E & B::E)
